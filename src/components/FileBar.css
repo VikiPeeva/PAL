@@ -1,0 +1,152 @@
+/* ── File Bar ─────────────────────────────────────────────── */
+
+.file-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-top: 1px solid #ddd;
+  background-color: #f0f0f0;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.file-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.file-bar::-webkit-scrollbar-button {
+  display: none;
+}
+
+.file-bar::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 2px;
+}
+
+.file-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 20px 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.8em;
+  transition: border-color 0.15s, background-color 0.15s;
+  flex-shrink: 0;
+}
+
+.file-chip:hover {
+  border-color: #396cd8;
+}
+
+.file-chip.selected {
+  border-color: #396cd8;
+  background-color: #dbe4ff;
+}
+
+.file-chip-remove {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  color: #999;
+  font-size: 0.8em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.file-chip-remove:hover {
+  background-color: #f03e3e;
+  color: #fff;
+  border-color: transparent;
+}
+
+.file-chip-name {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 18px;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 0.65em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.file-bar-add {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 0.8em;
+  border-radius: 6px;
+  border: 1px dashed #aaa;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.file-bar-add:hover {
+  border-color: #396cd8;
+  color: #396cd8;
+}
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .file-bar {
+    background-color: #1a1a1a;
+    border-top-color: #444;
+  }
+
+  .file-bar::-webkit-scrollbar-thumb {
+    background-color: #555;
+  }
+
+  .file-chip {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #f6f6f6;
+  }
+
+  .file-chip:hover {
+    border-color: #7b9cff;
+  }
+
+  .file-chip.selected {
+    border-color: #7b9cff;
+    background-color: #2d3a6e;
+  }
+
+  .file-bar-add {
+    border-color: #555;
+    color: #aaa;
+  }
+
+  .file-bar-add:hover {
+    border-color: #7b9cff;
+    color: #7b9cff;
+  }
+}
