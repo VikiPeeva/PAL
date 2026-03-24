@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "pippi",
+  "productName": "pal",
   "version": "0.1.0",
-  "identifier": "eu.vikipee.pippi",
+  "identifier": "eu.vipe.pal",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "pippi",
+        "title": "Pattern Analysis Lens (PAL)",
         "width": 800,
         "height": 600
       }
@@ -31,5 +31,10 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "opener": {
+      "requireLiteralLeadingDot": true
+    }
   }
 }
