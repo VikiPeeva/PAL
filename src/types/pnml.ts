@@ -23,3 +23,8 @@ export interface PnmlNet {
   transitions: PnmlTransition[];
   arcs: PnmlArc[];
 }
+
+export interface ZipPnmlFile {
+  name: string;
+  content: string;
+}

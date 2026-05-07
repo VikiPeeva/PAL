@@ -2,12 +2,14 @@ const COLORS: Record<string, string> = {
   xes:   "#4c6ef5",
   pnml:  "#37b24d",
   apnml: "#ae3ec9",
+  zip:   "#f59e0b",
 };
 
 const LABELS: Record<string, string> = {
   xes:   "XES",
   pnml:  "PNL",
   apnml: "APN",
+  zip:   "ZIP",
 };
 
 interface Props {

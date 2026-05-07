@@ -22,6 +22,7 @@ export function useFiles() {
   const handleSelectFile = async (path: string) => {
     setSelectedFile(path);
     setRawContent(null);
+    if (path.toLowerCase().endsWith(".zip")) return;
     try {
       const content: string = await invoke("read_file", { path });
       setRawContent(content);

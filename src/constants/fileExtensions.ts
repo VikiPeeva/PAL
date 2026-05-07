@@ -1,1 +1,1 @@
-export const ALLOWED_EXTENSIONS = ["xes", "pnml", "apnml"];
+export const ALLOWED_EXTENSIONS = ["xes", "pnml", "apnml", "zip"];

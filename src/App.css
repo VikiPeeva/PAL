@@ -40,6 +40,13 @@ html, body, #root {
   min-height: 0;
 }
 
+.content-area.zip-mode {
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+}
+
 h1 {
   text-align: center;
   margin: 0;
