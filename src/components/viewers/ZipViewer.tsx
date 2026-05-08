@@ -3,28 +3,25 @@ import { parsePnml } from "../../utils/parsePnml";
 import { PetriNetViewer } from "./PetriNetViewer";
 import { FileTypeIcon } from "../shared/FileTypeIcon";
 import type { ZipPnmlFile, PnmlNet } from "../../types/pnml";
-import type { PetriNetAnnotations } from "../../types/pnmlAnnotations.ts";
+import type { AnnotatedPetriNet, PetriNetAnnotations } from "../../types/pnmlAnnotations.ts";
 import "./ZipViewer.css";
 
 interface Props {
-  pnmlFiles:      ZipPnmlFile[];
+  pnmlFiles:       ZipPnmlFile[];
   getAnnotations?: (net: PnmlNet) => PetriNetAnnotations | undefined;
 }
 
 export function ZipViewer({ pnmlFiles, getAnnotations }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const petriNet = useMemo(() => {
+  const annotatedNet = useMemo<AnnotatedPetriNet | null>(() => {
     const file = pnmlFiles[selectedIndex];
     if (!file) return null;
-    try { return parsePnml(file.content); }
-    catch { return null; }
-  }, [pnmlFiles, selectedIndex]);
-
-  const annotations = useMemo(
-    () => (petriNet && getAnnotations ? getAnnotations(petriNet) : undefined),
-    [petriNet, getAnnotations],
-  );
+    try {
+      const net = parsePnml(file.content);
+      return { net, annotations: getAnnotations?.(net) };
+    } catch { return null; }
+  }, [pnmlFiles, selectedIndex, getAnnotations]);
 
   return (
     <div className="zip-viewer">
@@ -41,7 +38,7 @@ export function ZipViewer({ pnmlFiles, getAnnotations }: Props) {
         ))}
       </div>
       <div className="zip-viewer-panel">
-        {petriNet && <PetriNetViewer petriNet={petriNet} annotations={annotations} />}
+        {annotatedNet && <PetriNetViewer annotatedNet={annotatedNet} />}
       </div>
     </div>
   );

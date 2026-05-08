@@ -1,3 +1,10 @@
+import type { PnmlNet } from "./pnml";
+
+export interface AnnotatedPetriNet {
+  net:          PnmlNet;
+  annotations?: PetriNetAnnotations;
+}
+
 export interface PlaceAnnotation {
   /** Number of process instances that visited this place */
   caseFrequency?: number;

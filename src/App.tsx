@@ -19,9 +19,9 @@ function App() {
   const { parsedLog, variants } = useEventLog(selectedFile, rawContent);
   const { petriNet } = usePetriNet(selectedFile, rawContent);
   const { pnmlFiles } = useZipContents(selectedFile);
-  // DEV-ONLY: stable dummy annotations keyed to the current petriNet
-  const dummyAnnotations = useMemo(
-    () => (petriNet ? generateDummyAnnotations(petriNet) : undefined),
+  // DEV-ONLY: bundle net + dummy annotations; replace generateDummyAnnotations when real data arrives
+  const annotatedNet = useMemo(
+    () => (petriNet ? { net: petriNet, annotations: generateDummyAnnotations(petriNet) } : undefined),
     [petriNet],
   );
 
@@ -34,7 +34,7 @@ function App() {
 
         {parsedLog && <EventLogViewer variants={variants} />}
 
-        {petriNet && <PetriNetViewer petriNet={petriNet} annotations={dummyAnnotations} />}
+        {annotatedNet && <PetriNetViewer annotatedNet={annotatedNet} />}
 
         {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={generateDummyAnnotations} />}
 

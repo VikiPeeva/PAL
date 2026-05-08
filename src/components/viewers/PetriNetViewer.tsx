@@ -12,7 +12,7 @@ import {
 } from "@xyflow/react";
 import { graphlib, layout } from "@dagrejs/dagre";
 import type { PnmlNet } from "../../types/pnml";
-import type { PetriNetAnnotations, PlaceAnnotation, TransitionAnnotation } from "../../types/pnmlAnnotations.ts";
+import type { AnnotatedPetriNet, PetriNetAnnotations, PlaceAnnotation, TransitionAnnotation } from "../../types/pnmlAnnotations.ts";
 import "@xyflow/react/dist/style.css";
 import "./PetriNetViewer.css";
 
@@ -241,12 +241,11 @@ function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: 
 }
 
 interface Props {
-  petriNet:     PnmlNet;
-  annotations?: PetriNetAnnotations;
+  annotatedNet: AnnotatedPetriNet;
 }
 
-export function PetriNetViewer({ petriNet, annotations }: Props) {
-  const { nodes, edges } = useMemo(() => buildLayout(petriNet, annotations), [petriNet, annotations]);
+export function PetriNetViewer({ annotatedNet: { net, annotations } }: Props) {
+  const { nodes, edges } = useMemo(() => buildLayout(net, annotations), [net, annotations]);
 
   return (
     <div className="petri-net-wrapper">
