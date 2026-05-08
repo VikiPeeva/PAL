@@ -12,15 +12,48 @@ import {
 } from "@xyflow/react";
 import { graphlib, layout } from "@dagrejs/dagre";
 import type { PnmlNet } from "../../types/pnml";
+import type { PetriNetAnnotations, PlaceAnnotation, TransitionAnnotation } from "../../types/pnmlAnnotations.ts";
 import "@xyflow/react/dist/style.css";
 import "./PetriNetViewer.css";
 
-const PLACE_SIZE      = 60;
-const TRANSITION_W    = 80;
-const TRANSITION_H    = 40;
+const PLACE_SIZE             = 60;
+const TRANSITION_W           = 80;
+const TRANSITION_H           = 40;
+const TRANSITION_H_ANNOTATED = 80;
 
-type PlaceData      = { label: string; tokens: number };
-type TransitionData = { label: string };
+type PlaceData      = { label: string; tokens: number; annotation?: PlaceAnnotation };
+type TransitionData = { label: string; annotation?: TransitionAnnotation };
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k`;
+  return String(n);
+}
+
+function MiniBarChart({ values }: { values: number[] }) {
+  const max  = Math.max(...values, 1);
+  const w    = 68;
+  const h    = 30;
+  const barW = Math.max(2, Math.floor(w / values.length) - 1);
+  return (
+    <svg width={w} height={h} className="pn-dist-chart" aria-hidden="true">
+      {values.map((v, i) => {
+        const barH = Math.max(2, Math.round((v / max) * h));
+        return (
+          <rect
+            key={i}
+            x={i * (barW + 1)}
+            y={h - barH}
+            width={barW}
+            height={barH}
+            rx={1}
+            className="pn-dist-bar"
+          />
+        );
+      })}
+    </svg>
+  );
+}
 
 function PlaceNode({ data }: NodeProps<Node<PlaceData>>) {
   return (
@@ -30,6 +63,9 @@ function PlaceNode({ data }: NodeProps<Node<PlaceData>>) {
         {data.tokens > 0 && (
           <span className="pn-token">{data.tokens > 1 ? data.tokens : ""}</span>
         )}
+        {data.annotation?.caseFrequency !== undefined && (
+          <span className="pn-freq">{formatCount(data.annotation.caseFrequency)}</span>
+        )}
       </div>
       <Handle type="source" position={Position.Right} />
     </>
@@ -37,13 +73,21 @@ function PlaceNode({ data }: NodeProps<Node<PlaceData>>) {
 }
 
 function TransitionNode({ data }: NodeProps<Node<TransitionData>>) {
+  const hasChart = data.annotation?.distribution != null;
+  const handleStyle = hasChart ? { top: `${TRANSITION_H / 2}px` } : undefined;
   return (
     <>
-      <Handle type="target" position={Position.Left} />
-      <div className="pn-transition">
-        <span className="pn-label">{data.label}</span>
+      <Handle type="target" position={Position.Left} style={handleStyle} />
+      <div className={`pn-transition${hasChart ? " pn-transition--chart" : ""}`}>
+        <div className="pn-transition-top">
+          <span className="pn-label">{data.label}</span>
+          {data.annotation?.firingCount !== undefined && (
+            <span className="pn-count">{formatCount(data.annotation.firingCount)}</span>
+          )}
+        </div>
+        {hasChart && <MiniBarChart values={data.annotation!.distribution!} />}
       </div>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Right} style={handleStyle} />
     </>
   );
 }
@@ -53,7 +97,13 @@ const nodeTypes = { place: PlaceNode, transition: TransitionNode };
 const placeNodeId      = (id: string) => `p__${id}`;
 const transitionNodeId = (id: string) => `t__${id}`;
 
-function buildLayout(net: PnmlNet): { nodes: Node[]; edges: Edge[] } {
+function transitionHeight(id: string, annotations?: PetriNetAnnotations): number {
+  return annotations?.transitions[id]?.distribution != null
+    ? TRANSITION_H_ANNOTATED
+    : TRANSITION_H;
+}
+
+function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: Node[]; edges: Edge[] } {
   const placeIds = new Set(net.places.map((p) => p.id));
   const arcEndId = (id: string) =>
     placeIds.has(id) ? placeNodeId(id) : transitionNodeId(id);
@@ -66,7 +116,8 @@ function buildLayout(net: PnmlNet): { nodes: Node[]; edges: Edge[] } {
     g.setNode(placeNodeId(place.id), { width: PLACE_SIZE, height: PLACE_SIZE });
   }
   for (const transition of net.transitions) {
-    g.setNode(transitionNodeId(transition.id), { width: TRANSITION_W, height: TRANSITION_H });
+    const h = transitionHeight(transition.id, annotations);
+    g.setNode(transitionNodeId(transition.id), { width: TRANSITION_W, height: h });
   }
   for (const arc of net.arcs) {
     g.setEdge(arcEndId(arc.source), arcEndId(arc.target));
@@ -82,39 +133,46 @@ function buildLayout(net: PnmlNet): { nodes: Node[]; edges: Edge[] } {
         id,
         type:     "place" as const,
         position: { x: (pos?.x ?? 0) - PLACE_SIZE / 2, y: (pos?.y ?? 0) - PLACE_SIZE / 2 },
-        data:     { label: place.name, tokens: place.initialMarking },
+        data:     { label: place.name, tokens: place.initialMarking, annotation: annotations?.places[place.id] },
       };
     }),
     ...net.transitions.map((transition) => {
-      const id  = transitionNodeId(transition.id);
+      const id = transitionNodeId(transition.id);
       const pos = g.node(id);
+      const h  = transitionHeight(transition.id, annotations);
       return {
         id,
         type:     "transition" as const,
-        position: { x: (pos?.x ?? 0) - TRANSITION_W / 2, y: (pos?.y ?? 0) - TRANSITION_H / 2 },
-        data:     { label: transition.name },
+        position: { x: (pos?.x ?? 0) - TRANSITION_W / 2, y: (pos?.y ?? 0) - h / 2 },
+        data:     { label: transition.name, annotation: annotations?.transitions[transition.id] },
       };
     }),
   ];
 
-  const edges: Edge[] = net.arcs.map((arc) => ({
-    id:        arc.id,
-    source:    arcEndId(arc.source),
-    target:    arcEndId(arc.target),
-    label:     arc.inscription > 1 ? String(arc.inscription) : undefined,
-    type:      "smoothstep",
-    markerEnd: { type: MarkerType.ArrowClosed },
-  }));
+  const edges: Edge[] = net.arcs.map((arc) => {
+    const flowCount  = annotations?.arcs[arc.id]?.flowCount;
+    const arcLabel   = arc.inscription > 1 ? String(arc.inscription) : undefined;
+    const label      = flowCount !== undefined ? formatCount(flowCount) : arcLabel;
+    return {
+      id:        arc.id,
+      source:    arcEndId(arc.source),
+      target:    arcEndId(arc.target),
+      label,
+      type:      "smoothstep",
+      markerEnd: { type: MarkerType.ArrowClosed },
+    };
+  });
 
   return { nodes, edges };
 }
 
 interface Props {
-  petriNet: PnmlNet;
+  petriNet:    PnmlNet;
+  annotations?: PetriNetAnnotations;
 }
 
-export function PetriNetViewer({ petriNet }: Props) {
-  const { nodes, edges } = useMemo(() => buildLayout(petriNet), [petriNet]);
+export function PetriNetViewer({ petriNet, annotations }: Props) {
+  const { nodes, edges } = useMemo(() => buildLayout(petriNet, annotations), [petriNet, annotations]);
 
   return (
     <div className="petri-net-wrapper">

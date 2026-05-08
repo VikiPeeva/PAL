@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useFiles } from "./hooks/useFiles";
 import { useDragDrop } from "./hooks/useDragDrop";
 import { useEventLog } from "./hooks/useEventLog";
@@ -8,6 +9,8 @@ import { PetriNetViewer } from "./components/viewers/PetriNetViewer";
 import { ZipViewer } from "./components/viewers/ZipViewer";
 import { FileBar } from "./components/core/FileBar";
 import { EmptyState } from "./components/core/EmptyState";
+// DEV-ONLY: replace with real annotation data when available
+import { generateDummyAnnotations } from "./dev/dummyAnnotations";
 import "./App.css";
 
 function App() {
@@ -16,6 +19,11 @@ function App() {
   const { parsedLog, variants } = useEventLog(selectedFile, rawContent);
   const { petriNet } = usePetriNet(selectedFile, rawContent);
   const { pnmlFiles } = useZipContents(selectedFile);
+  // DEV-ONLY: stable dummy annotations keyed to the current petriNet
+  const dummyAnnotations = useMemo(
+    () => (petriNet ? generateDummyAnnotations(petriNet) : undefined),
+    [petriNet],
+  );
 
   const zipMode = pnmlFiles !== null && pnmlFiles.length > 0;
 
@@ -26,7 +34,7 @@ function App() {
 
         {parsedLog && <EventLogViewer variants={variants} />}
 
-        {petriNet && <PetriNetViewer petriNet={petriNet} />}
+        {petriNet && <PetriNetViewer petriNet={petriNet} annotations={dummyAnnotations} />}
 
         {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} />}
 

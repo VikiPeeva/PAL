@@ -70,6 +70,63 @@
   padding: 0 2px;
 }
 
+/* ── Case-frequency label inside place ───────────────────── */
+
+.pn-freq {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.52em;
+  font-weight: 700;
+  color: #2f9e44;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── Transition label row (label + firing count) ─────────── */
+
+.pn-transition-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+}
+
+/* ── Firing-count badge inside transition ────────────────── */
+
+.pn-count {
+  font-size: 0.48em;
+  font-weight: 600;
+  color: #4263eb;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Transition expanded for distribution chart ──────────── */
+
+.pn-transition--chart {
+  height: 80px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 4px;
+}
+
+/* ── Mini bar chart ──────────────────────────────────────── */
+
+.pn-dist-chart {
+  display: block;
+  flex-shrink: 0;
+}
+
+.pn-dist-bar {
+  fill: #4263eb;
+  opacity: 0.65;
+}
+
 /* ── React Flow node wrapper overrides ───────────────────── */
 
 .react-flow__node-place,
@@ -106,6 +163,18 @@
 
   .pn-token {
     background-color: #40c057;
+  }
+
+  .pn-freq {
+    color: #40c057;
+  }
+
+  .pn-count {
+    color: #748ffc;
+  }
+
+  .pn-dist-bar {
+    fill: #748ffc;
   }
 
   .react-flow__background {
