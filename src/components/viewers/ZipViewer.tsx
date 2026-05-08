@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { parsePnml } from "../../utils/parsePnml";
-import { PetriNetViewer } from "./PetriNetViewer";
+import { PetriNetViewer } from "./processModels/PetriNetViewer.tsx";
 import { FileTypeIcon } from "../shared/FileTypeIcon";
 import type { ZipPnmlFile, PnmlNet } from "../../types/pnml";
 import type { AnnotatedPetriNet, PetriNetAnnotations } from "../../types/pnmlAnnotations.ts";

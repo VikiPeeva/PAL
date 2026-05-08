@@ -16,20 +16,20 @@ import {
   type EdgeProps,
 } from "@xyflow/react";
 import { graphlib, layout } from "@dagrejs/dagre";
-import type { PnmlNet } from "../../types/pnml";
+import type { PnmlNet } from "../../../types/pnml.ts";
 import type {
   AnnotatedPetriNet,
   PetriNetAnnotations,
   PlaceAnnotation,
   TransitionAnnotation,
   AnnotationKey,
-} from "../../types/pnmlAnnotations.ts";
+} from "../../../types/pnmlAnnotations.ts";
 import {
   ANNOTATION_GROUPS,
   SLOT_COLORS,
   buildDefaultEnabledColors,
-} from "../../types/pnmlAnnotations.ts";
-import { AnnotationSelector } from "./AnnotationSelector";
+} from "../../../types/pnmlAnnotations.ts";
+import { AnnotationSelector } from "./AnnotationSelector.tsx";
 import "@xyflow/react/dist/style.css";
 import "./PetriNetViewer.css";
 

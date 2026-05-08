@@ -1,4 +1,4 @@
-import { ANNOTATION_GROUPS, type AnnotationKey } from "../../types/pnmlAnnotations";
+import { ANNOTATION_GROUPS, type AnnotationKey } from "../../../types/pnmlAnnotations.ts";
 import "./AnnotationSelector.css";
 
 interface Props {
