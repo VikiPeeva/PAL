@@ -1,0 +1,76 @@
+.ann-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.72em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  min-width: 130px;
+}
+
+.ann-group-label {
+  font-weight: 700;
+  color: #495057;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.ann-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ann-chip {
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  background: #f8f9fa;
+  color: #495057;
+  cursor: pointer;
+  font-size: inherit;
+  line-height: 1.4;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ann-chip.active {
+  color: #fff;
+}
+
+.ann-chip:disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.ann-chip-wrap {
+  display: inline-flex;
+}
+
+.ann-chip-wrap:has(button:disabled) {
+  cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ann-selector {
+    background: rgba(30, 30, 30, 0.92);
+    border-color: #444;
+    color: #e9ecef;
+  }
+
+  .ann-group-label {
+    color: #adb5bd;
+  }
+
+  .ann-chip {
+    background: #2a2a2a;
+    border-color: #555;
+    color: #ced4da;
+  }
+
+  .ann-chip.active {
+    color: #fff;
+  }
+}

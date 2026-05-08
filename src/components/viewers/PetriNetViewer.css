@@ -80,19 +80,8 @@
   transform: translateX(-50%);
   font-size: 0.52em;
   font-weight: 700;
-  color: #2f9e44;
   line-height: 1;
   white-space: nowrap;
-}
-
-/* ── Transition label row (label + firing count) ─────────── */
-
-.pn-transition-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 100%;
 }
 
 /* ── Firing-count badge inside transition ────────────────── */
@@ -100,7 +89,6 @@
 .pn-count {
   font-size: 0.48em;
   font-weight: 600;
-  color: #4263eb;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -116,16 +104,32 @@
   padding: 4px;
 }
 
-/* ── Mini bar chart ──────────────────────────────────────── */
+/* ── Mini bar charts ─────────────────────────────────────── */
 
-.pn-dist-chart {
+.pn-dist-chart,
+.pn-place-chart {
   display: block;
   flex-shrink: 0;
 }
 
 .pn-dist-bar {
-  fill: #4263eb;
+  fill: currentColor;
   opacity: 0.65;
+}
+
+/* ── Place stacked (freq + mini chart) ───────────────────── */
+
+.pn-place--stacked {
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Avg-duration label inside transition ────────────────── */
+
+.pn-duration {
+  font-size: 0.45em;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ── Arc annotation label (rendered via EdgeLabelRenderer) ── */
@@ -178,18 +182,6 @@
 
   .pn-token {
     background-color: #40c057;
-  }
-
-  .pn-freq {
-    color: #40c057;
-  }
-
-  .pn-count {
-    color: #748ffc;
-  }
-
-  .pn-dist-bar {
-    fill: #748ffc;
   }
 
   .pn-edge-label {

@@ -31,3 +31,53 @@ export interface PetriNetAnnotations {
   transitions: Record<string, TransitionAnnotation>;
   arcs:        Record<string, ArcAnnotation>;
 }
+
+export type AnnotationKey =
+  | "place.caseFrequency"
+  | "place.distribution"
+  | "transition.firingCount"
+  | "transition.avgDuration"
+  | "transition.distribution"
+  | "arc.flowCount";
+
+export const SLOT_COLORS: [string, string] = ["#4263eb", "#0ca678"];
+
+export interface AnnotationGroup {
+  label: string;
+  items: { key: AnnotationKey; label: string }[];
+}
+
+export const ANNOTATION_GROUPS: AnnotationGroup[] = [
+  { label: "Places", items: [
+    { key: "place.caseFrequency", label: "Frequency" },
+    { key: "place.distribution",  label: "Distribution" },
+  ]},
+  { label: "Transitions", items: [
+    { key: "transition.firingCount",  label: "Count" },
+    { key: "transition.avgDuration",  label: "Avg duration" },
+    { key: "transition.distribution", label: "Distribution" },
+  ]},
+  { label: "Arcs", items: [
+    { key: "arc.flowCount", label: "Flow count" },
+  ]},
+];
+
+const DEFAULT_ANNOTATION_KEYS: AnnotationKey[] = [
+  "place.caseFrequency",
+  "transition.firingCount",
+  "transition.distribution",
+  "arc.flowCount",
+];
+
+export function buildDefaultEnabledColors(): Map<AnnotationKey, string> {
+  const map = new Map<AnnotationKey, string>();
+  for (const group of ANNOTATION_GROUPS) {
+    let slot = 0;
+    for (const { key } of group.items) {
+      if (DEFAULT_ANNOTATION_KEYS.includes(key)) {
+        map.set(key, SLOT_COLORS[slot++]);
+      }
+    }
+  }
+  return map;
+}
