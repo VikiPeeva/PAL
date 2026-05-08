@@ -3,11 +3,11 @@ import { useDragDrop } from "./hooks/useDragDrop";
 import { useEventLog } from "./hooks/useEventLog";
 import { usePetriNet } from "./hooks/usePetriNet";
 import { useZipContents } from "./hooks/useZipContents";
-import { EventLogViewer } from "./components/EventLogViewer";
-import { PetriNetViewer } from "./components/PetriNetViewer";
-import { ZipViewer } from "./components/ZipViewer";
-import { FileBar } from "./components/FileBar";
-import { EmptyState } from "./components/EmptyState";
+import { EventLogViewer } from "./components/viewers/EventLogViewer";
+import { PetriNetViewer } from "./components/viewers/PetriNetViewer";
+import { ZipViewer } from "./components/viewers/ZipViewer";
+import { FileBar } from "./components/core/FileBar";
+import { EmptyState } from "./components/core/EmptyState";
 import "./App.css";
 
 function App() {

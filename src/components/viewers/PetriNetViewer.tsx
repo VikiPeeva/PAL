@@ -11,7 +11,7 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import { graphlib, layout } from "@dagrejs/dagre";
-import type { PnmlNet } from "../types/pnml";
+import type { PnmlNet } from "../../types/pnml";
 import "@xyflow/react/dist/style.css";
 import "./PetriNetViewer.css";
 

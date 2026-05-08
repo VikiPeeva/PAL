@@ -1,4 +1,4 @@
-import type { XesEvent } from "../types/xes";
+import type { XesEvent } from "../../types/xes";
 
 interface Props {
   events: XesEvent[];

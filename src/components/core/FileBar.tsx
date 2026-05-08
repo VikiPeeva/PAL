@@ -1,4 +1,4 @@
-import { FileTypeIcon } from "./FileTypeIcon";
+import { FileTypeIcon } from "../shared/FileTypeIcon";
 import "./FileBar.css";
 
 interface Props {

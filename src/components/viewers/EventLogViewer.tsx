@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { XesVariant } from "../types/xes";
-import { TraceChevrons } from "./TraceChevrons";
+import type { XesVariant } from "../../types/xes";
+import { TraceChevrons } from "../shared/TraceChevrons";
 import "./EventLogViewer.css";
 
 interface Props {

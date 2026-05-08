@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { parsePnml } from "../utils/parsePnml";
+import { parsePnml } from "../../utils/parsePnml";
 import { PetriNetViewer } from "./PetriNetViewer";
-import { FileTypeIcon } from "./FileTypeIcon";
-import type { ZipPnmlFile } from "../types/pnml";
+import { FileTypeIcon } from "../shared/FileTypeIcon";
+import type { ZipPnmlFile } from "../../types/pnml";
 import "./ZipViewer.css";
 
 interface Props {
