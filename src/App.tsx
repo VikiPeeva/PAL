@@ -36,7 +36,7 @@ function App() {
 
         {petriNet && <PetriNetViewer petriNet={petriNet} annotations={dummyAnnotations} />}
 
-        {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} />}
+        {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={generateDummyAnnotations} />}
 
         {!parsedLog && !petriNet && !zipMode && rawContent !== null && (
           <pre className="file-content">{rawContent}</pre>
