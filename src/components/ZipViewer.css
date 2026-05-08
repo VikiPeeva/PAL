@@ -1,0 +1,94 @@
+/* ── Zip Viewer (split panel) ────────────────────────────── */
+
+.zip-viewer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+/* ── File list (left panel) ──────────────────────────────── */
+
+.zip-file-list {
+  width: 220px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  background-color: #f8f8f8;
+  padding: 4px 0;
+}
+
+.zip-file-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.zip-file-list::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 2px;
+}
+
+.zip-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background-color 0.1s;
+  user-select: none;
+}
+
+.zip-file-item:hover {
+  background-color: #eef0f5;
+}
+
+.zip-file-item.selected {
+  background-color: #dbe4ff;
+  color: #3b5bdb;
+}
+
+.zip-file-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Viewer panel (right panel) ──────────────────────────── */
+
+.zip-viewer-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.zip-viewer-panel .petri-net-wrapper {
+  flex: 1;
+  border-radius: 0 8px 8px 0;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .zip-file-list {
+    background-color: #1e1e1e;
+    border-color: #444;
+  }
+
+  .zip-file-list::-webkit-scrollbar-thumb {
+    background-color: #555;
+  }
+
+  .zip-file-item:hover {
+    background-color: #2a2a2a;
+  }
+
+  .zip-file-item.selected {
+    background-color: #2d3a6e;
+    color: #7b9cff;
+  }
+}
