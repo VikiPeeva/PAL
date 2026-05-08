@@ -6,9 +6,13 @@ import {
   Handle,
   Position,
   MarkerType,
+  BaseEdge,
+  getStraightPath,
+  EdgeLabelRenderer,
   type Node,
   type Edge,
   type NodeProps,
+  type EdgeProps,
 } from "@xyflow/react";
 import { graphlib, layout } from "@dagrejs/dagre";
 import type { PnmlNet } from "../../types/pnml";
@@ -21,29 +25,13 @@ const TRANSITION_W           = 80;
 const TRANSITION_H           = 40;
 const TRANSITION_H_ANNOTATED = 80;
 
-type PlaceData = {
-  label: string;
-  tokens: number;
-  annotation?: PlaceAnnotation;
-  incomingArcIds: string[];
-  outgoingArcIds: string[];
-};
-
-type TransitionData = {
-  label: string;
-  annotation?: TransitionAnnotation;
-  incomingArcIds: string[];
-  outgoingArcIds: string[];
-};
+type PlaceData      = { label: string; tokens: number; annotation?: PlaceAnnotation };
+type TransitionData = { label: string; annotation?: TransitionAnnotation };
 
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k`;
   return String(n);
-}
-
-function handleTop(index: number, total: number, areaHeight: number): string {
-  return `${(areaHeight * (index + 1)) / (total + 1)}px`;
 }
 
 function MiniBarChart({ values }: { values: number[] }) {
@@ -72,78 +60,60 @@ function MiniBarChart({ values }: { values: number[] }) {
 }
 
 function PlaceNode({ data }: NodeProps<Node<PlaceData>>) {
-  const inN = data.incomingArcIds.length;
-  const outN = data.outgoingArcIds.length;
   return (
-    <>
-      {data.incomingArcIds.map((id, i) => (
-        <Handle
-          key={id}
-          id={id}
-          type="target"
-          position={Position.Left}
-          style={{ top: handleTop(i, inN, PLACE_SIZE) }}
-        />
-      ))}
-      <div className="pn-place">
-        {data.tokens > 0 && (
-          <span className="pn-token">{data.tokens > 1 ? data.tokens : ""}</span>
-        )}
-        {data.annotation?.caseFrequency !== undefined && (
-          <span className="pn-freq">{formatCount(data.annotation.caseFrequency)}</span>
-        )}
-      </div>
-      {data.outgoingArcIds.map((id, i) => (
-        <Handle
-          key={id}
-          id={id}
-          type="source"
-          position={Position.Right}
-          style={{ top: handleTop(i, outN, PLACE_SIZE) }}
-        />
-      ))}
-    </>
+    <div className="pn-place">
+      <Handle type="target" position={Position.Left} />
+      {data.tokens > 0 && (
+        <span className="pn-token">{data.tokens > 1 ? data.tokens : ""}</span>
+      )}
+      {data.annotation?.caseFrequency !== undefined && (
+        <span className="pn-freq">{formatCount(data.annotation.caseFrequency)}</span>
+      )}
+      <Handle type="source" position={Position.Right} />
+    </div>
   );
 }
 
 function TransitionNode({ data }: NodeProps<Node<TransitionData>>) {
   const hasChart = data.annotation?.distribution != null;
-  const inN  = data.incomingArcIds.length;
-  const outN = data.outgoingArcIds.length;
+  return (
+    <div className={`pn-transition${hasChart ? " pn-transition--chart" : ""}`}>
+      <Handle type="target" position={Position.Left} />
+      <div className="pn-transition-top">
+        <span className="pn-label">{data.label}</span>
+        {data.annotation?.firingCount !== undefined && (
+          <span className="pn-count">{formatCount(data.annotation.firingCount)}</span>
+        )}
+      </div>
+      {hasChart && <MiniBarChart values={data.annotation!.distribution!} />}
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+function LabeledStraightEdge({ id, sourceX, sourceY, targetX, targetY, label, markerEnd, style }: EdgeProps) {
+  const [edgePath] = getStraightPath({ sourceX, sourceY, targetX, targetY });
+  const lx = sourceX + (targetX - sourceX) / 3;
+  const ly = sourceY + (targetY - sourceY) / 3;
   return (
     <>
-      {data.incomingArcIds.map((id, i) => (
-        <Handle
-          key={id}
-          id={id}
-          type="target"
-          position={Position.Left}
-          style={{ top: handleTop(i, inN, TRANSITION_H) }}
-        />
-      ))}
-      <div className={`pn-transition${hasChart ? " pn-transition--chart" : ""}`}>
-        <div className="pn-transition-top">
-          <span className="pn-label">{data.label}</span>
-          {data.annotation?.firingCount !== undefined && (
-            <span className="pn-count">{formatCount(data.annotation.firingCount)}</span>
-          )}
-        </div>
-        {hasChart && <MiniBarChart values={data.annotation!.distribution!} />}
-      </div>
-      {data.outgoingArcIds.map((id, i) => (
-        <Handle
-          key={id}
-          id={id}
-          type="source"
-          position={Position.Right}
-          style={{ top: handleTop(i, outN, TRANSITION_H) }}
-        />
-      ))}
+      <BaseEdge id={id} path={edgePath} markerEnd={markerEnd} style={style} />
+      {label && (
+        <EdgeLabelRenderer>
+          <span
+            className="pn-edge-label nodrag nopan"
+            style={{ transform: `translate(-50%,-50%) translate(${lx}px,${ly}px)` }}
+          >
+            {label}
+          </span>
+        </EdgeLabelRenderer>
+      )}
     </>
   );
 }
 
 const nodeTypes = { place: PlaceNode, transition: TransitionNode };
+const edgeTypes = { "labeled-straight": LabeledStraightEdge };
 
 const placeNodeId      = (id: string) => `p__${id}`;
 const transitionNodeId = (id: string) => `t__${id}`;
@@ -158,16 +128,6 @@ function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: 
   const placeIds = new Set(net.places.map((p) => p.id));
   const arcEndId = (id: string) =>
     placeIds.has(id) ? placeNodeId(id) : transitionNodeId(id);
-
-  // Bucket incoming/outgoing arc IDs per node for per-arc handles
-  const targetArcs = new Map<string, string[]>();
-  const sourceArcs = new Map<string, string[]>();
-  for (const arc of net.arcs) {
-    const src = arcEndId(arc.source);
-    const tgt = arcEndId(arc.target);
-    sourceArcs.set(src, [...(sourceArcs.get(src) ?? []), arc.id]);
-    targetArcs.set(tgt, [...(targetArcs.get(tgt) ?? []), arc.id]);
-  }
 
   const g = new graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
@@ -194,13 +154,7 @@ function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: 
         id,
         type:     "place" as const,
         position: { x: (pos?.x ?? 0) - PLACE_SIZE / 2, y: (pos?.y ?? 0) - PLACE_SIZE / 2 },
-        data: {
-          label:          place.name,
-          tokens:         place.initialMarking,
-          annotation:     annotations?.places[place.id],
-          incomingArcIds: targetArcs.get(id) ?? [],
-          outgoingArcIds: sourceArcs.get(id) ?? [],
-        },
+        data:     { label: place.name, tokens: place.initialMarking, annotation: annotations?.places[place.id] },
       };
     }),
     ...net.transitions.map((transition) => {
@@ -211,12 +165,7 @@ function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: 
         id,
         type:     "transition" as const,
         position: { x: (pos?.x ?? 0) - TRANSITION_W / 2, y: (pos?.y ?? 0) - h / 2 },
-        data: {
-          label:          transition.name,
-          annotation:     annotations?.transitions[transition.id],
-          incomingArcIds: targetArcs.get(id) ?? [],
-          outgoingArcIds: sourceArcs.get(id) ?? [],
-        },
+        data:     { label: transition.name, annotation: annotations?.transitions[transition.id] },
       };
     }),
   ];
@@ -224,16 +173,13 @@ function buildLayout(net: PnmlNet, annotations?: PetriNetAnnotations): { nodes: 
   const edges: Edge[] = net.arcs.map((arc) => {
     const flowCount = annotations?.arcs[arc.id]?.flowCount;
     const arcLabel  = arc.inscription > 1 ? String(arc.inscription) : undefined;
-    const label     = flowCount !== undefined ? formatCount(flowCount) : arcLabel;
     return {
-      id:           arc.id,
-      source:       arcEndId(arc.source),
-      target:       arcEndId(arc.target),
-      sourceHandle: arc.id,
-      targetHandle: arc.id,
-      label,
-      type:         "default",
-      markerEnd:    { type: MarkerType.ArrowClosed },
+      id:        arc.id,
+      source:    arcEndId(arc.source),
+      target:    arcEndId(arc.target),
+      label:     flowCount !== undefined ? formatCount(flowCount) : arcLabel,
+      type:      "labeled-straight",
+      markerEnd: { type: MarkerType.ArrowClosed },
     };
   });
 
@@ -253,6 +199,7 @@ export function PetriNetViewer({ annotatedNet: { net, annotations } }: Props) {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={() => {}}
         onEdgesChange={() => {}}
         fitView

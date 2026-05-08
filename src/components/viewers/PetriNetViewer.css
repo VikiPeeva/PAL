@@ -27,6 +27,7 @@
 /* ── Transition node (rectangle) ────────────────────────── */
 
 .pn-transition {
+  position: relative;
   width: 80px;
   height: 40px;
   border-radius: 4px;
@@ -127,6 +128,20 @@
   opacity: 0.65;
 }
 
+/* ── Arc annotation label (rendered via EdgeLabelRenderer) ── */
+
+.pn-edge-label {
+  position: absolute;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: #495057;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1px 4px;
+  border-radius: 2px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 /* ── React Flow node wrapper overrides ───────────────────── */
 
 .react-flow__node-place,
@@ -175,6 +190,11 @@
 
   .pn-dist-bar {
     fill: #748ffc;
+  }
+
+  .pn-edge-label {
+    color: #ced4da;
+    background: rgba(30, 30, 30, 0.85);
   }
 
   .react-flow__background {
