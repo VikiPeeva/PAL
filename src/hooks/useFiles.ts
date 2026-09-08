@@ -1,12 +1,13 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ALLOWED_EXTENSIONS } from "../constants/fileExtensions.ts";
+import { useStaleGuard } from "./useStaleGuard";
 
 export function useFiles() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [rawContent, setRawContent] = useState<string | null>(null);
-  const selectedFileRef = useRef<string | null>(null);
+  const { markCurrent, isCurrent } = useStaleGuard<string | null>();
 
   const addPaths = (paths: string[]) => {
     setUploadedFiles((prev) => {
@@ -21,22 +22,22 @@ export function useFiles() {
   };
 
   const handleSelectFile = async (path: string) => {
-    selectedFileRef.current = path;
+    markCurrent(path);
     setSelectedFile(path);
     setRawContent(null);
     if (path.toLowerCase().endsWith(".zip")) return;
     try {
       const content: string = await invoke("read_file", { path });
-      if (selectedFileRef.current === path) setRawContent(content);
+      if (isCurrent(path)) setRawContent(content);
     } catch (e) {
-      if (selectedFileRef.current === path) setRawContent(`Error reading file: ${e}`);
+      if (isCurrent(path)) setRawContent(`Error reading file: ${e}`);
     }
   };
 
   const handleRemoveFile = (path: string) => {
     setUploadedFiles((prev) => prev.filter((p) => p !== path));
     if (selectedFile === path) {
-      selectedFileRef.current = null;
+      markCurrent(null);
       setSelectedFile(null);
       setRawContent(null);
     }
