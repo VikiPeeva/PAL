@@ -49,6 +49,7 @@ type TransitionData = {
   label:            string;
   annotation?:      TransitionAnnotation;
   annotationColors: Partial<Record<AnnotationKey, string>>;
+  annotated:        boolean;
 };
 
 function formatCount(n: number): string {
@@ -140,9 +141,8 @@ function TransitionNode({ data }: NodeProps<Node<TransitionData>>) {
   const countColor = data.annotationColors["transition.firingCount"];
   const durColor   = data.annotationColors["transition.avgDuration"];
   const distColor  = data.annotationColors["transition.distribution"];
-  const hasAny     = !!(countColor || durColor || distColor);
   return (
-    <div className={`pn-transition${hasAny ? " pn-transition--chart" : ""}`}>
+    <div className={`pn-transition${data.annotated ? " pn-transition--chart" : ""}`}>
       <Handle type="target" position={Position.Left} />
       <span className="pn-label">{data.label}</span>
       {countColor && data.annotation?.firingCount !== undefined && (
@@ -190,18 +190,25 @@ const edgeTypes = { "labeled-straight": LabeledStraightEdge };
 const placeNodeId      = (id: string) => `p__${id}`;
 const transitionNodeId = (id: string) => `t__${id}`;
 
+function transitionHasVisibleAnnotation(
+  ann?: TransitionAnnotation,
+  enabledColors?: ReadonlyMap<AnnotationKey, string>,
+): boolean {
+  if (!ann || !enabledColors) return false;
+  return (
+    (enabledColors.has("transition.distribution") && ann.distribution != null) ||
+    (enabledColors.has("transition.firingCount")  && ann.firingCount  !== undefined) ||
+    (enabledColors.has("transition.avgDuration")  && ann.avgDuration  !== undefined)
+  );
+}
+
 function transitionHeight(
   id: string,
   annotations?: PetriNetAnnotations,
   enabledColors?: ReadonlyMap<AnnotationKey, string>,
 ): number {
   const ann = annotations?.transitions[id];
-  if (!ann || !enabledColors) return TRANSITION_H;
-  const hasAny =
-    (enabledColors.has("transition.distribution") && ann.distribution != null) ||
-    (enabledColors.has("transition.firingCount")  && ann.firingCount  !== undefined) ||
-    (enabledColors.has("transition.avgDuration")  && ann.avgDuration  !== undefined);
-  return hasAny ? TRANSITION_H_ANNOTATED : TRANSITION_H;
+  return transitionHasVisibleAnnotation(ann, enabledColors) ? TRANSITION_H_ANNOTATED : TRANSITION_H;
 }
 
 function buildLayout(
@@ -252,14 +259,17 @@ function buildLayout(
     ...net.transitions.map((transition) => {
       const id  = transitionNodeId(transition.id);
       const pos = g.node(id);
-      const h   = transitionHeight(transition.id, annotations, enabledColors);
+      const ann = annotations?.transitions[transition.id];
+      const annotated = transitionHasVisibleAnnotation(ann, enabledColors);
+      const h   = annotated ? TRANSITION_H_ANNOTATED : TRANSITION_H;
       return {
         id,
         type:     "transition" as const,
         position: { x: (pos?.x ?? 0) - TRANSITION_W / 2, y: (pos?.y ?? 0) - h / 2 },
         data:     {
           label:      transition.name,
-          annotation: annotations?.transitions[transition.id],
+          annotation: ann,
+          annotated,
           annotationColors: {
             "transition.firingCount":  enabledColors.get("transition.firingCount"),
             "transition.avgDuration":  enabledColors.get("transition.avgDuration"),
