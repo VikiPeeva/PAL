@@ -14,11 +14,13 @@ import "./App.css";
 function App() {
   const { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile, fileName } = useFiles();
   const { isDragging } = useDragDrop(addPaths);
-  const { parsedLog, variants } = useEventLog(selectedFile, rawContent);
-  const { annotatedNet } = usePetriNet(selectedFile, rawContent, annotationsProvider);
+  const { parsedLog, variants, error: xesError } = useEventLog(selectedFile, rawContent);
+  const { annotatedNet, error: pnmlError } = usePetriNet(selectedFile, rawContent, annotationsProvider);
   const { pnmlFiles } = useZipContents(selectedFile);
 
   const zipMode = pnmlFiles !== null && pnmlFiles.length > 0;
+  // Only one of these can be set for a given selectedFile — its extension picks the parser.
+  const parseError = xesError ?? pnmlError;
 
   return (
     <main className={`container${isDragging ? " drag-over" : ""}`}>
@@ -32,7 +34,12 @@ function App() {
         {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={annotationsProvider} />}
 
         {!parsedLog && !annotatedNet && !zipMode && rawContent !== null && (
-          <pre className="file-content">{rawContent}</pre>
+          <>
+            {parseError && (
+              <p className="parse-error">Couldn't parse this file: {parseError}</p>
+            )}
+            <pre className="file-content">{rawContent}</pre>
+          </>
         )}
 
         {!parsedLog && !annotatedNet && !zipMode && rawContent === null && <EmptyState />}

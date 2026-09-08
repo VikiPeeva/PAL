@@ -94,6 +94,17 @@ button:active {
 
 /* ── Raw File Content ─────────────────────────────────────── */
 
+.parse-error {
+  width: 100%;
+  margin: 0;
+  padding: 0.6em 1em;
+  border-radius: 8px;
+  background-color: #fdecea;
+  color: #a33;
+  font-size: 0.875em;
+  text-align: left;
+}
+
 .file-content {
   width: 100%;
   max-height: 400px;
@@ -127,6 +138,11 @@ button:active {
 
   .file-content {
     border-color: #555;
+  }
+
+  .parse-error {
+    background-color: #3a2222;
+    color: #f28b82;
   }
 
   .container.drag-over .content-area {

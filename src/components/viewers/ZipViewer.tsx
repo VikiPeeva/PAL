@@ -17,7 +17,11 @@ export function ZipViewer({ pnmlFiles, getAnnotations }: Props) {
   const annotatedNet = useMemo<AnnotatedPetriNet | null>(() => {
     const file = pnmlFiles[selectedIndex];
     if (!file) return null;
-    return buildAnnotatedNet(file.content, getAnnotations);
+    try {
+      return buildAnnotatedNet(file.content, getAnnotations);
+    } catch {
+      return null;
+    }
   }, [pnmlFiles, selectedIndex, getAnnotations]);
 
   return (

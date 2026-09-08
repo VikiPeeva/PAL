@@ -4,13 +4,13 @@ import { groupVariants } from "../utils/groupVariants";
 import type { XesTrace, XesVariant } from "../types/xes";
 
 export function useEventLog(selectedFile: string | null, rawContent: string | null) {
-  const parsedLog = useMemo<XesTrace[] | null>(() => {
-    if (!selectedFile || !rawContent) return null;
-    if (!selectedFile.toLowerCase().endsWith(".xes")) return null;
+  const { parsedLog, error } = useMemo<{ parsedLog: XesTrace[] | null; error: string | null }>(() => {
+    if (!selectedFile || !rawContent) return { parsedLog: null, error: null };
+    if (!selectedFile.toLowerCase().endsWith(".xes")) return { parsedLog: null, error: null };
     try {
-      return parseXes(rawContent);
-    } catch {
-      return null;
+      return { parsedLog: parseXes(rawContent), error: null };
+    } catch (e) {
+      return { parsedLog: null, error: e instanceof Error ? e.message : String(e) };
     }
   }, [selectedFile, rawContent]);
 
@@ -19,5 +19,5 @@ export function useEventLog(selectedFile: string | null, rawContent: string | nu
     [parsedLog]
   );
 
-  return { parsedLog, variants };
+  return { parsedLog, variants, error };
 }

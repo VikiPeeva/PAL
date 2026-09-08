@@ -8,12 +8,16 @@ export function usePetriNet(
   rawContent: string | null,
   getAnnotations?: (net: PnmlNet) => PetriNetAnnotations | undefined,
 ) {
-  const annotatedNet = useMemo<AnnotatedPetriNet | null>(() => {
-    if (!selectedFile || !rawContent) return null;
+  const { annotatedNet, error } = useMemo<{ annotatedNet: AnnotatedPetriNet | null; error: string | null }>(() => {
+    if (!selectedFile || !rawContent) return { annotatedNet: null, error: null };
     const lower = selectedFile.toLowerCase();
-    if (!lower.endsWith(".pnml") && !lower.endsWith(".apnml")) return null;
-    return buildAnnotatedNet(rawContent, getAnnotations);
+    if (!lower.endsWith(".pnml") && !lower.endsWith(".apnml")) return { annotatedNet: null, error: null };
+    try {
+      return { annotatedNet: buildAnnotatedNet(rawContent, getAnnotations), error: null };
+    } catch (e) {
+      return { annotatedNet: null, error: e instanceof Error ? e.message : String(e) };
+    }
   }, [selectedFile, rawContent, getAnnotations]);
 
-  return { annotatedNet };
+  return { annotatedNet, error };
 }
