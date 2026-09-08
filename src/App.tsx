@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useFiles } from "./hooks/useFiles";
 import { useDragDrop } from "./hooks/useDragDrop";
 import { useEventLog } from "./hooks/useEventLog";
@@ -16,12 +15,8 @@ function App() {
   const { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile, fileName } = useFiles();
   const { isDragging } = useDragDrop(addPaths);
   const { parsedLog, variants } = useEventLog(selectedFile, rawContent);
-  const { petriNet } = usePetriNet(selectedFile, rawContent);
+  const { annotatedNet } = usePetriNet(selectedFile, rawContent, annotationsProvider);
   const { pnmlFiles } = useZipContents(selectedFile);
-  const annotatedNet = useMemo(
-    () => (petriNet ? { net: petriNet, annotations: annotationsProvider(petriNet) } : undefined),
-    [petriNet],
-  );
 
   const zipMode = pnmlFiles !== null && pnmlFiles.length > 0;
 
@@ -36,11 +31,11 @@ function App() {
 
         {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={annotationsProvider} />}
 
-        {!parsedLog && !petriNet && !zipMode && rawContent !== null && (
+        {!parsedLog && !annotatedNet && !zipMode && rawContent !== null && (
           <pre className="file-content">{rawContent}</pre>
         )}
 
-        {!parsedLog && !petriNet && !zipMode && rawContent === null && <EmptyState />}
+        {!parsedLog && !annotatedNet && !zipMode && rawContent === null && <EmptyState />}
       </div>
 
       <FileBar

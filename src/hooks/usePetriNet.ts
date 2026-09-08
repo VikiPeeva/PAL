@@ -1,18 +1,19 @@
 import { useMemo } from "react";
-import { parsePnml } from "../utils/parsePnml";
+import { buildAnnotatedNet } from "../utils/buildAnnotatedNet";
 import type { PnmlNet } from "../types/pnml";
+import type { AnnotatedPetriNet, PetriNetAnnotations } from "../types/pnmlAnnotations";
 
-export function usePetriNet(selectedFile: string | null, rawContent: string | null) {
-  const petriNet = useMemo<PnmlNet | null>(() => {
+export function usePetriNet(
+  selectedFile: string | null,
+  rawContent: string | null,
+  getAnnotations?: (net: PnmlNet) => PetriNetAnnotations | undefined,
+) {
+  const annotatedNet = useMemo<AnnotatedPetriNet | null>(() => {
     if (!selectedFile || !rawContent) return null;
     const lower = selectedFile.toLowerCase();
     if (!lower.endsWith(".pnml") && !lower.endsWith(".apnml")) return null;
-    try {
-      return parsePnml(rawContent);
-    } catch {
-      return null;
-    }
-  }, [selectedFile, rawContent]);
+    return buildAnnotatedNet(rawContent, getAnnotations);
+  }, [selectedFile, rawContent, getAnnotations]);
 
-  return { petriNet };
+  return { annotatedNet };
 }

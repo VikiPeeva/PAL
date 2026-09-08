@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { parsePnml } from "../../utils/parsePnml";
+import { buildAnnotatedNet } from "../../utils/buildAnnotatedNet";
 import { PetriNetViewer } from "./processModels/PetriNetViewer.tsx";
 import { FileTypeIcon } from "../shared/FileTypeIcon";
 import type { ZipPnmlFile, PnmlNet } from "../../types/pnml";
@@ -17,10 +17,7 @@ export function ZipViewer({ pnmlFiles, getAnnotations }: Props) {
   const annotatedNet = useMemo<AnnotatedPetriNet | null>(() => {
     const file = pnmlFiles[selectedIndex];
     if (!file) return null;
-    try {
-      const net = parsePnml(file.content);
-      return { net, annotations: getAnnotations?.(net) };
-    } catch { return null; }
+    return buildAnnotatedNet(file.content, getAnnotations);
   }, [pnmlFiles, selectedIndex, getAnnotations]);
 
   return (
