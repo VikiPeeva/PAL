@@ -31,12 +31,18 @@ export function parsePnml(xml: string): PnmlNet {
       name: getText(el, "name") || el.getAttribute("id")!,
     }));
 
-  const arcs: PnmlArc[] = Array.from(netEl.querySelectorAll("arc")).map((el) => ({
-    id:          el.getAttribute("id") ?? "",
-    source:      el.getAttribute("source") ?? "",
-    target:      el.getAttribute("target") ?? "",
-    inscription: parseInt(getText(el, "inscription") || "1", 10) || 1,
-  }));
+  const seenArcIds = new Set<string>();
+  const arcs: PnmlArc[] = Array.from(netEl.querySelectorAll("arc")).map((el, i) => {
+    let id = el.getAttribute("id") ?? "";
+    if (!id || seenArcIds.has(id)) id = `arc__${i}`;
+    seenArcIds.add(id);
+    return {
+      id,
+      source:      el.getAttribute("source") ?? "",
+      target:      el.getAttribute("target") ?? "",
+      inscription: parseInt(getText(el, "inscription") || "1", 10) || 1,
+    };
+  });
 
   return { id: netId, name: netName, places, transitions, arcs };
 }
