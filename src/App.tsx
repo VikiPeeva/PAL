@@ -9,8 +9,7 @@ import { PetriNetViewer } from "./components/viewers/processModels/PetriNetViewe
 import { ZipViewer } from "./components/viewers/ZipViewer";
 import { FileBar } from "./components/core/FileBar";
 import { EmptyState } from "./components/core/EmptyState";
-// DEV-ONLY: replace with real annotation data when available
-import { generateDummyAnnotations } from "./dev/dummyAnnotations";
+import { annotationsProvider } from "./services/annotationsProvider";
 import "./App.css";
 
 function App() {
@@ -19,9 +18,8 @@ function App() {
   const { parsedLog, variants } = useEventLog(selectedFile, rawContent);
   const { petriNet } = usePetriNet(selectedFile, rawContent);
   const { pnmlFiles } = useZipContents(selectedFile);
-  // DEV-ONLY: bundle net + dummy annotations; replace generateDummyAnnotations when real data arrives
   const annotatedNet = useMemo(
-    () => (petriNet ? { net: petriNet, annotations: generateDummyAnnotations(petriNet) } : undefined),
+    () => (petriNet ? { net: petriNet, annotations: annotationsProvider(petriNet) } : undefined),
     [petriNet],
   );
 
@@ -36,7 +34,7 @@ function App() {
 
         {annotatedNet && <PetriNetViewer annotatedNet={annotatedNet} />}
 
-        {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={generateDummyAnnotations} />}
+        {zipMode && <ZipViewer key={selectedFile} pnmlFiles={pnmlFiles} getAnnotations={annotationsProvider} />}
 
         {!parsedLog && !petriNet && !zipMode && rawContent !== null && (
           <pre className="file-content">{rawContent}</pre>
