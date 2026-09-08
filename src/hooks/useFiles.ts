@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ALLOWED_EXTENSIONS } from "../constants/fileExtensions.ts";
 
@@ -6,6 +6,7 @@ export function useFiles() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [rawContent, setRawContent] = useState<string | null>(null);
+  const selectedFileRef = useRef<string | null>(null);
 
   const addPaths = (paths: string[]) => {
     setUploadedFiles((prev) => {
@@ -20,20 +21,22 @@ export function useFiles() {
   };
 
   const handleSelectFile = async (path: string) => {
+    selectedFileRef.current = path;
     setSelectedFile(path);
     setRawContent(null);
     if (path.toLowerCase().endsWith(".zip")) return;
     try {
       const content: string = await invoke("read_file", { path });
-      setRawContent(content);
+      if (selectedFileRef.current === path) setRawContent(content);
     } catch (e) {
-      setRawContent(`Error reading file: ${e}`);
+      if (selectedFileRef.current === path) setRawContent(`Error reading file: ${e}`);
     }
   };
 
   const handleRemoveFile = (path: string) => {
     setUploadedFiles((prev) => prev.filter((p) => p !== path));
     if (selectedFile === path) {
+      selectedFileRef.current = null;
       setSelectedFile(null);
       setRawContent(null);
     }

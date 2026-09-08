@@ -10,9 +10,11 @@ export function useZipContents(selectedFile: string | null) {
       setPnmlFiles(null);
       return;
     }
+    let stale = false;
     invoke<ZipPnmlFile[]>("read_zip_pnmls", { path: selectedFile })
-      .then(setPnmlFiles)
-      .catch(() => setPnmlFiles([]));
+      .then((files) => { if (!stale) setPnmlFiles(files); })
+      .catch(() => { if (!stale) setPnmlFiles([]); });
+    return () => { stale = true; };
   }, [selectedFile]);
 
   return { pnmlFiles };
