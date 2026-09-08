@@ -1,22 +1,23 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { ZipPnmlFile } from "../types/pnml";
-import { useStaleGuard } from "./useStaleGuard";
 
 export function useZipContents(selectedFile: string | null) {
-  const [pnmlFiles, setPnmlFiles] = useState<ZipPnmlFile[] | null>(null);
-  const { markCurrent, isCurrent } = useStaleGuard<string | null>();
+  // Tagged with the path it was read from, so results from a superseded
+  // selection can be told apart from the current one at render time.
+  const [loaded, setLoaded] = useState<{ path: string; files: ZipPnmlFile[] } | null>(null);
+  const isZip = selectedFile !== null && selectedFile.toLowerCase().endsWith(".zip");
 
   useEffect(() => {
-    markCurrent(selectedFile);
-    if (!selectedFile?.toLowerCase().endsWith(".zip")) {
-      setPnmlFiles(null);
-      return;
-    }
+    if (!isZip || selectedFile === null) return;
+    let cancelled = false;
     invoke<ZipPnmlFile[]>("read_zip_pnmls", { path: selectedFile })
-      .then((files) => { if (isCurrent(selectedFile)) setPnmlFiles(files); })
-      .catch(() => { if (isCurrent(selectedFile)) setPnmlFiles([]); });
-  }, [selectedFile]);
+      .then((files) => { if (!cancelled) setLoaded({ path: selectedFile, files }); })
+      .catch(() => { if (!cancelled) setLoaded({ path: selectedFile, files: [] }); });
+    return () => { cancelled = true; };
+  }, [selectedFile, isZip]);
+
+  const pnmlFiles = isZip && loaded?.path === selectedFile ? loaded.files : null;
 
   return { pnmlFiles };
 }

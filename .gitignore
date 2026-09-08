@@ -25,8 +25,8 @@
 # pnpm package manager specific files
 
 # PNPM
-pnpm-lock.yaml
-pnpm-workspace.yaml
+# pnpm-lock.yaml is deliberately tracked: it pins the exact dependency tree for
+# reproducible local and CI installs (`pnpm install --frozen-lockfile`).
 .pnpm/
 .pnpm-debug.log
 
