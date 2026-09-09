@@ -24,8 +24,14 @@
   border-radius: 2px;
 }
 
-.file-chip {
+/* Positioning context for the absolutely placed remove control. */
+.file-chip-wrap {
   position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.file-chip {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -33,6 +39,7 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background-color: var(--bg-raised);
+  box-shadow: none;
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;

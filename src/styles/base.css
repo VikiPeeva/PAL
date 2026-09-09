@@ -44,7 +44,6 @@ button {
   transition: border-color 0.25s;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  outline: none;
 }
 
 button:hover {
@@ -54,4 +53,14 @@ button:hover {
 button:active {
   border-color: var(--accent);
   background-color: var(--bg-active);
+}
+
+/*
+ * Keyboard focus must stay visible. :focus-visible fires for keyboard
+ * navigation but not for a mouse click, so the ring can be shown
+ * unconditionally without appearing on every press.
+ */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

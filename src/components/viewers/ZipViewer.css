@@ -31,11 +31,20 @@
   border-radius: 2px;
 }
 
+/* A real <button> so it is reachable by keyboard; the global button chrome
+   from base.css is stripped back to a plain list row. */
 .zip-file-item {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
   padding: 6px 10px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  text-align: left;
   cursor: pointer;
   font-size: 0.8em;
   transition: background-color 0.1s;

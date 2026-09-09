@@ -28,14 +28,16 @@ export function ZipViewer({ pnmlFiles, getAnnotations }: Props) {
     <div className="zip-viewer">
       <div className="zip-file-list">
         {pnmlFiles.map((file, i) => (
-          <div
+          <button
             key={file.name}
+            type="button"
             className={`zip-file-item${i === selectedIndex ? " selected" : ""}`}
+            aria-current={i === selectedIndex}
             onClick={() => setSelectedIndex(i)}
           >
             <FileTypeIcon extension="pnml" />
             <span className="zip-file-item-name">{file.name}</span>
-          </div>
+          </button>
         ))}
       </div>
       <div className="zip-viewer-panel">
