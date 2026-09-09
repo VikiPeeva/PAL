@@ -1,0 +1,57 @@
+/*
+ * Base — element-level defaults that apply everywhere.
+ *
+ * Nothing here is tied to a component: it is the document reset plus the look
+ * of bare `button` and `h1` elements. Component stylesheets sit on top of this.
+ * Values come from theme.css, which must be imported first.
+ */
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: var(--text);
+  background-color: var(--bg-app);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+  margin: 0;
+}
+
+button {
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text);
+  background-color: var(--bg-raised);
+  transition: border-color 0.25s;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button:active {
+  border-color: var(--accent);
+  background-color: var(--bg-active);
+}

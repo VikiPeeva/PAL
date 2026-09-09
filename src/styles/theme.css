@@ -1,0 +1,101 @@
+/*
+ * Theme — the single source of truth for colour, radius and shadow.
+ *
+ * Component stylesheets reference these variables and never hard-code a value,
+ * so the whole palette (light *and* dark) lives here. That is also why this is
+ * the only file with a `prefers-color-scheme` block: dark mode is a matter of
+ * redefining these variables, not of restating rules in every component.
+ *
+ * Imported first in main.tsx so the variables exist before any component CSS.
+ */
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --bg-app:          #f6f6f6;  /* window background                     */
+  --bg-panel:        #f0f0f0;  /* chrome: file bar                      */
+  --bg-raised:       #ffffff;  /* things that sit on top: buttons, chips */
+  --bg-sunken:       #f8f9fa;  /* things you look into: lists, canvas   */
+  --bg-hover:        #eef0f5;  /* row hover                             */
+  --bg-active:       #e8e8e8;  /* button being pressed                  */
+  --bg-overlay:      rgba(255, 255, 255, 0.92);  /* floating panels     */
+  --bg-overlay-soft: rgba(255, 255, 255, 0.85);  /* label backdrops     */
+
+  /* ── Text ─────────────────────────────────────────────────── */
+  --text:           #0f0f0f;
+  --text-secondary: #495057;  /* labels on light panels        */
+  --text-muted:     #666;     /* counts, secondary controls    */
+  --text-subtle:    #888;     /* headings of empty/idle states */
+  --text-faint:     #aaa;     /* icons and hints               */
+  --text-on-accent: #ffffff;  /* text on a filled colour       */
+
+  /* ── Borders ──────────────────────────────────────────────── */
+  --border-subtle: #eee;  /* dividers between rows */
+  --border:        #ddd;  /* default outline       */
+  --border-strong: #ccc;  /* panels, scrollbars    */
+
+  /* ── Accent ───────────────────────────────────────────────── */
+  --accent:         #396cd8;
+  --accent-bg:      #dbe4ff;  /* selected item background */
+  --accent-bg-soft: #eef2ff;  /* drop target background   */
+
+  /* ── Danger ───────────────────────────────────────────────── */
+  --danger:      #f03e3e;
+  --danger-bg:   #fdecea;
+  --danger-text: #a33;
+
+  /* ── Petri net nodes ──────────────────────────────────────── */
+  --pn-place-border:      #2f9e44;
+  --pn-place-bg:          #d3f9d8;
+  --pn-transition-border: #4263eb;
+  --pn-transition-bg:     #dbe4ff;
+
+  /* Fallback for anything drawn in a colour that data did not supply: an
+   * unrecognised file extension, an activity with no palette entry. */
+  --color-unassigned: #6c757d;
+
+  /* ── Radii ────────────────────────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --shadow-sm: 0 2px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app:          #2f2f2f;
+    --bg-panel:        #1a1a1a;
+    --bg-raised:       #2a2a2a;
+    --bg-sunken:       #1e1e1e;
+    --bg-hover:        #2a2a2a;
+    --bg-active:       #333;
+    --bg-overlay:      rgba(30, 30, 30, 0.92);
+    --bg-overlay-soft: rgba(30, 30, 30, 0.85);
+
+    --text:           #f6f6f6;
+    --text-secondary: #ced4da;
+    --text-muted:     #aaa;
+    --text-subtle:    #666;
+    --text-faint:     #555;
+    --text-on-accent: #ffffff;
+
+    --border-subtle: #333;
+    --border:        #444;
+    --border-strong: #555;
+
+    --accent:         #7b9cff;
+    --accent-bg:      #2d3a6e;
+    --accent-bg-soft: #2d3a6e;
+
+    --danger:      #f03e3e;
+    --danger-bg:   #3a2222;
+    --danger-text: #f28b82;
+
+    --pn-place-border:      #40c057;
+    --pn-place-bg:          #1a3a21;
+    --pn-transition-border: #748ffc;
+    --pn-transition-bg:     #1e2a5a;
+  }
+}

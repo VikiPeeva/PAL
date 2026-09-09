@@ -1,4 +1,5 @@
 import type { XesEvent } from "../../types/xes";
+import "./TraceChevrons.css";
 
 interface Props {
   events: XesEvent[];
@@ -10,7 +11,9 @@ export function TraceChevrons({ events, activityColors }: Props) {
     <div className="chevron-strip">
       {events.map((event, i) => {
         const activity = event["concept:name"] ?? "?";
-        const color = activityColors.get(activity) ?? "#888";
+        // Left unset when the activity has no palette entry, so the CSS
+        // fallback (--color-unassigned) applies rather than a second default.
+        const color = activityColors.get(activity);
         return (
           <div
             key={i}

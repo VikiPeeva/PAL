@@ -5,8 +5,8 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border-top: 1px solid #ddd;
-  background-color: #f0f0f0;
+  border-top: 1px solid var(--border);
+  background-color: var(--bg-panel);
   overflow-x: auto;
   flex-shrink: 0;
 }
@@ -20,7 +20,7 @@
 }
 
 .file-bar::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: var(--border-strong);
   border-radius: 2px;
 }
 
@@ -30,9 +30,10 @@
   align-items: center;
   gap: 6px;
   padding: 4px 20px 4px 6px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background-color: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--bg-raised);
+  color: var(--text);
   cursor: pointer;
   white-space: nowrap;
   font-size: 0.8em;
@@ -41,12 +42,12 @@
 }
 
 .file-chip:hover {
-  border-color: #396cd8;
+  border-color: var(--accent);
 }
 
 .file-chip.selected {
-  border-color: #396cd8;
-  background-color: #dbe4ff;
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
 }
 
 .file-chip-remove {
@@ -63,15 +64,15 @@
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
-  color: #999;
+  color: var(--text-muted);
   font-size: 0.8em;
   line-height: 1;
   cursor: pointer;
 }
 
 .file-chip-remove:hover {
-  background-color: #f03e3e;
-  color: #fff;
+  background-color: var(--danger);
+  color: var(--text-on-accent);
   border-color: transparent;
 }
 
@@ -81,72 +82,20 @@
   text-overflow: ellipsis;
 }
 
-.file-type-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 18px;
-  border-radius: 3px;
-  color: #fff;
-  font-size: 0.65em;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  flex-shrink: 0;
-}
-
 .file-bar-add {
   flex-shrink: 0;
   padding: 4px 10px;
   font-size: 0.8em;
-  border-radius: 6px;
-  border: 1px dashed #aaa;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-strong);
   background: transparent;
-  color: #666;
+  color: var(--text-muted);
   cursor: pointer;
   box-shadow: none;
   transition: border-color 0.15s, color 0.15s;
 }
 
 .file-bar-add:hover {
-  border-color: #396cd8;
-  color: #396cd8;
-}
-
-/* ── Dark Mode ────────────────────────────────────────────── */
-
-@media (prefers-color-scheme: dark) {
-  .file-bar {
-    background-color: #1a1a1a;
-    border-top-color: #444;
-  }
-
-  .file-bar::-webkit-scrollbar-thumb {
-    background-color: #555;
-  }
-
-  .file-chip {
-    background-color: #2a2a2a;
-    border-color: #444;
-    color: #f6f6f6;
-  }
-
-  .file-chip:hover {
-    border-color: #7b9cff;
-  }
-
-  .file-chip.selected {
-    border-color: #7b9cff;
-    background-color: #2d3a6e;
-  }
-
-  .file-bar-add {
-    border-color: #555;
-    color: #aaa;
-  }
-
-  .file-bar-add:hover {
-    border-color: #7b9cff;
-    color: #7b9cff;
-  }
+  border-color: var(--accent);
+  color: var(--accent);
 }

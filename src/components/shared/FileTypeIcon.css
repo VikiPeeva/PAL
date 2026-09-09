@@ -1,0 +1,16 @@
+/* Badge showing a file's format, e.g. XES or PNL. */
+
+.file-type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 18px;
+  border-radius: 3px;
+  /* Background is the format's colour, set inline from FILE_TYPES. */
+  color: var(--text-on-accent);
+  font-size: 0.65em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}

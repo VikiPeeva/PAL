@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: #aaa;
+  color: var(--text-faint);
   text-align: center;
   padding: 2rem;
   user-select: none;
@@ -14,34 +14,20 @@
 .empty-state-icon {
   width: 80px;
   height: 80px;
-  color: #aaa;
+  color: var(--text-faint);
 }
 
 .empty-state-title {
   margin: 0;
   font-size: 1.3em;
   font-weight: 600;
-  color: #888;
+  color: var(--text-subtle);
 }
 
 .empty-state-subtitle {
   margin: 0;
   font-size: 0.9em;
-  color: #aaa;
+  color: var(--text-faint);
   max-width: 280px;
   line-height: 1.5;
-}
-
-@media (prefers-color-scheme: dark) {
-  .empty-state-icon {
-    color: #555;
-  }
-
-  .empty-state-title {
-    color: #666;
-  }
-
-  .empty-state-subtitle {
-    color: #555;
-  }
 }

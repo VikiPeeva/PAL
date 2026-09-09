@@ -4,10 +4,10 @@
   width: 100%;
   flex: 1;
   min-height: 400px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background-color: #fafafa;
+  background-color: var(--bg-sunken);
 }
 
 /* ── Place node (circle) ─────────────────────────────────── */
@@ -17,8 +17,8 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 2px solid #2f9e44;
-  background-color: #d3f9d8;
+  border: 2px solid var(--pn-place-border);
+  background-color: var(--pn-place-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,9 +30,9 @@
   position: relative;
   width: 80px;
   height: 40px;
-  border-radius: 4px;
-  border: 2px solid #4263eb;
-  background-color: #dbe4ff;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--pn-transition-border);
+  background-color: var(--pn-transition-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 90%;
-  color: #1a1a1a;
+  color: var(--text);
   line-height: 1.2;
 }
 
@@ -60,14 +60,14 @@
   right: 4px;
   min-width: 12px;
   height: 12px;
-  border-radius: 6px;
-  background-color: #2f9e44;
+  border-radius: var(--radius-md);
+  background-color: var(--pn-place-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.5em;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-on-accent);
   padding: 0 2px;
 }
 
@@ -138,8 +138,8 @@
   position: absolute;
   font-size: 0.55em;
   font-weight: 600;
-  color: #495057;
-  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-secondary);
+  background: var(--bg-overlay-soft);
   padding: 1px 4px;
   border-radius: 2px;
   pointer-events: none;
@@ -158,48 +158,23 @@
   height: auto;
 }
 
-/* ── Dark Mode ────────────────────────────────────────────── */
-
+/*
+ * React Flow's own stylesheet only ships light-mode colours for its canvas and
+ * control buttons, so these two need a dark-mode override rather than a plain
+ * variable swap — there is no light-mode rule of ours for the theme to reach.
+ */
 @media (prefers-color-scheme: dark) {
-  .petri-net-wrapper {
-    border-color: #555;
-    background-color: #1e1e1e;
-  }
-
-  .pn-place {
-    border-color: #40c057;
-    background-color: #1a3a21;
-  }
-
-  .pn-transition {
-    border-color: #748ffc;
-    background-color: #1e2a5a;
-  }
-
-  .pn-label {
-    color: #e9ecef;
-  }
-
-  .pn-token {
-    background-color: #40c057;
-  }
-
-  .pn-edge-label {
-    color: #ced4da;
-    background: rgba(30, 30, 30, 0.85);
-  }
-
   .react-flow__background {
-    background-color: #1e1e1e;
+    background-color: var(--bg-sunken);
   }
 
   .react-flow__controls button {
-    background-color: #2a2a2a;
-    border-color: #444;
-    color: #e9ecef;
+    background-color: var(--bg-raised);
+    border-color: var(--border);
+    color: var(--text);
   }
 
   .react-flow__controls button:hover {
-    background-color: #333;
+    background-color: var(--bg-active);
   }
 }
