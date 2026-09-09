@@ -2,11 +2,22 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ALLOWED_EXTENSIONS, fileKindOf } from "../utils/fileTypes";
 import { useStaleGuard } from "./useStaleGuard";
+import type { ZipPnmlFile } from "../types/pnml";
+
+/**
+ * Result of loading the selected file's bytes. `null` means nothing is
+ * selected — distinct from "loading", so the UI can tell the two apart.
+ */
+export type LoadedFile =
+  | { status: "loading" }
+  | { status: "text";    content: string }
+  | { status: "archive"; pnmlFiles: ZipPnmlFile[] }
+  | { status: "error";   message: string };
 
 export function useFiles() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [rawContent, setRawContent] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState<LoadedFile | null>(null);
   const { markCurrent, isCurrent } = useStaleGuard<string | null>();
 
   const addPaths = (paths: string[]) => {
@@ -24,14 +35,16 @@ export function useFiles() {
   const handleSelectFile = async (path: string) => {
     markCurrent(path);
     setSelectedFile(path);
-    setRawContent(null);
-    // Archives aren't read as text — useZipContents loads their entries instead.
-    if (fileKindOf(path) === "archive") return;
+    setLoaded({ status: "loading" });
     try {
-      const content: string = await invoke("read_file", { path });
-      if (isCurrent(path)) setRawContent(content);
+      // One place decides how a file's bytes are fetched; the kind picks the command.
+      const next: LoadedFile =
+        fileKindOf(path) === "archive"
+          ? { status: "archive", pnmlFiles: await invoke<ZipPnmlFile[]>("read_zip_pnmls", { path }) }
+          : { status: "text", content: await invoke<string>("read_file", { path }) };
+      if (isCurrent(path)) setLoaded(next);
     } catch (e) {
-      if (isCurrent(path)) setRawContent(`Error reading file: ${e}`);
+      if (isCurrent(path)) setLoaded({ status: "error", message: String(e) });
     }
   };
 
@@ -40,9 +53,9 @@ export function useFiles() {
     if (selectedFile === path) {
       markCurrent(null);
       setSelectedFile(null);
-      setRawContent(null);
+      setLoaded(null);
     }
   };
 
-  return { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile };
+  return { uploadedFiles, selectedFile, loaded, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile };
 }
