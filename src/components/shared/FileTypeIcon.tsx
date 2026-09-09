@@ -1,29 +1,18 @@
-const COLORS: Record<string, string> = {
-  xes:   "#4c6ef5",
-  pnml:  "#37b24d",
-  apnml: "#ae3ec9",
-  zip:   "#f59e0b",
-};
+import { FILE_TYPES, type FileExtension } from "../../utils/fileTypes";
 
-const LABELS: Record<string, string> = {
-  xes:   "XES",
-  pnml:  "PNL",
-  apnml: "APN",
-  zip:   "ZIP",
-};
+const FALLBACK_COLOR = "#868e96";
 
 interface Props {
   extension: string;
 }
 
 export function FileTypeIcon({ extension }: Props) {
-  const ext = extension.toLowerCase();
-  const color = COLORS[ext] ?? "#868e96";
-  const label = LABELS[ext] ?? ext.slice(0, 3).toUpperCase();
+  const ext  = extension.toLowerCase();
+  const spec = FILE_TYPES[ext as FileExtension] as { label: string; color: string } | undefined;
 
   return (
-    <span className="file-type-icon" style={{ backgroundColor: color }}>
-      {label}
+    <span className="file-type-icon" style={{ backgroundColor: spec?.color ?? FALLBACK_COLOR }}>
+      {spec?.label ?? ext.slice(0, 3).toUpperCase()}
     </span>
   );
 }

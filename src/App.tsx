@@ -12,7 +12,7 @@ import { annotationsProvider } from "./services/annotationsProvider";
 import "./App.css";
 
 function App() {
-  const { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile, fileName } = useFiles();
+  const { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile } = useFiles();
   const { isDragging } = useDragDrop(addPaths);
   const { parsedLog, variants, error: xesError } = useEventLog(selectedFile, rawContent);
   const { annotatedNet, error: pnmlError } = usePetriNet(selectedFile, rawContent, annotationsProvider);
@@ -51,7 +51,6 @@ function App() {
         onSelectFile={handleSelectFile}
         onRemoveFile={handleRemoveFile}
         onAddFiles={handleAddFiles}
-        fileName={fileName}
       />
     </main>
   );

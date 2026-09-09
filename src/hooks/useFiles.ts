@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ALLOWED_EXTENSIONS } from "../constants/fileExtensions.ts";
+import { ALLOWED_EXTENSIONS, fileKindOf } from "../utils/fileTypes";
 import { useStaleGuard } from "./useStaleGuard";
 
 export function useFiles() {
@@ -25,7 +25,8 @@ export function useFiles() {
     markCurrent(path);
     setSelectedFile(path);
     setRawContent(null);
-    if (path.toLowerCase().endsWith(".zip")) return;
+    // Archives aren't read as text — useZipContents loads their entries instead.
+    if (fileKindOf(path) === "archive") return;
     try {
       const content: string = await invoke("read_file", { path });
       if (isCurrent(path)) setRawContent(content);
@@ -43,8 +44,5 @@ export function useFiles() {
     }
   };
 
-  const fileName = (path: string) =>
-    path.replace(/\\/g, "/").split("/").pop() ?? path;
-
-  return { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile, fileName };
+  return { uploadedFiles, selectedFile, rawContent, addPaths, handleAddFiles, handleSelectFile, handleRemoveFile };
 }

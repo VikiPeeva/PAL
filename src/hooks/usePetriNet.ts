@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { buildAnnotatedNet } from "../utils/buildAnnotatedNet";
+import { fileKindOf } from "../utils/fileTypes";
 import type { PnmlNet } from "../types/pnml";
 import type { AnnotatedPetriNet, PetriNetAnnotations } from "../types/pnmlAnnotations";
 
@@ -10,8 +11,7 @@ export function usePetriNet(
 ) {
   const { annotatedNet, error } = useMemo<{ annotatedNet: AnnotatedPetriNet | null; error: string | null }>(() => {
     if (!selectedFile || !rawContent) return { annotatedNet: null, error: null };
-    const lower = selectedFile.toLowerCase();
-    if (!lower.endsWith(".pnml") && !lower.endsWith(".apnml")) return { annotatedNet: null, error: null };
+    if (fileKindOf(selectedFile) !== "petriNet") return { annotatedNet: null, error: null };
     try {
       return { annotatedNet: buildAnnotatedNet(rawContent, getAnnotations), error: null };
     } catch (e) {

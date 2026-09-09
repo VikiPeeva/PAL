@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { ALLOWED_EXTENSIONS } from "../constants/fileExtensions.ts";
+import { fileTypeOf } from "../utils/fileTypes";
 
 export function useDragDrop(onDrop: (paths: string[]) => void) {
   const [isDragging, setIsDragging] = useState(false);
@@ -21,9 +21,7 @@ export function useDragDrop(onDrop: (paths: string[]) => void) {
         setIsDragging(false);
       } else if (event.payload.type === "drop") {
         setIsDragging(false);
-        const paths = event.payload.paths.filter((p) =>
-          ALLOWED_EXTENSIONS.includes(p.split(".").pop()?.toLowerCase() ?? "")
-        );
+        const paths = event.payload.paths.filter((p) => fileTypeOf(p) !== undefined);
         if (paths.length > 0) onDropRef.current(paths);
       }
     }).then((fn) => {
