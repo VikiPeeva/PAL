@@ -8,20 +8,6 @@
   padding-bottom: 2px;
 }
 
-/* Hide scrollbar arrows, keep the track */
-.chevron-strip::-webkit-scrollbar {
-  height: 4px;
-}
-
-.chevron-strip::-webkit-scrollbar-button {
-  display: none;
-}
-
-.chevron-strip::-webkit-scrollbar-thumb {
-  background-color: var(--border-strong);
-  border-radius: 2px;
-}
-
 .chevron {
   display: flex;
   align-items: center;

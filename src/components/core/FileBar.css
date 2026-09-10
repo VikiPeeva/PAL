@@ -11,19 +11,6 @@
   flex-shrink: 0;
 }
 
-.file-bar::-webkit-scrollbar {
-  height: 3px;
-}
-
-.file-bar::-webkit-scrollbar-button {
-  display: none;
-}
-
-.file-bar::-webkit-scrollbar-thumb {
-  background-color: var(--border-strong);
-  border-radius: 2px;
-}
-
 /* Positioning context for the absolutely placed remove control. */
 .file-chip-wrap {
   position: relative;

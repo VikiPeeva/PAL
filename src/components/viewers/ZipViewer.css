@@ -22,15 +22,6 @@
   padding: 4px 0;
 }
 
-.zip-file-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.zip-file-list::-webkit-scrollbar-thumb {
-  background-color: var(--border-strong);
-  border-radius: 2px;
-}
-
 /* A real <button> so it is reachable by keyboard; the global button chrome
    from base.css is stripped back to a plain list row. */
 .zip-file-item {

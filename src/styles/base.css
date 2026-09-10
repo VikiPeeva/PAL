@@ -64,3 +64,29 @@ button:active {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/*
+ * Scrollbars, styled once for every scrolling container in the app.
+ *
+ * `::-webkit-scrollbar` rather than the standard `scrollbar-width` /
+ * `scrollbar-color`: Tauri renders on WebView2 (Chromium) on Windows and on
+ * WebKit on macOS and Linux, and WebKit still has only partial support for the
+ * standard properties. The prefixed pseudo-elements are the ones that work on
+ * all three. Setting both would also backfire — where Chromium honours the
+ * standard properties it ignores these rules, so the thumb would jump to the
+ * much thicker `thin` default.
+ */
+::-webkit-scrollbar {
+  width:  4px;
+  height: 4px;
+}
+
+/* Hide the stepper arrows, keep the track. */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 2px;
+}
