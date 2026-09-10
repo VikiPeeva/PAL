@@ -8,7 +8,7 @@ on:
 
 jobs:
   frontend:
-    name: Frontend (typecheck, lint, build)
+    name: Frontend (typecheck, lint, test, build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,8 @@ jobs:
       - run: pnpm typecheck
 
       - run: pnpm lint
+
+      - run: pnpm test
 
       - run: pnpm build
 
